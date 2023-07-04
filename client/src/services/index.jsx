@@ -1,7 +1,6 @@
 import axios from "axios";
 // BackendUrl =>
-// export const serverUrl = "http://localhost:8000/heft";
-export const serverUrl = "https://chai-ke-nashedi.onrender.com";
+export const serverUrl = "http://localhost:8000/heft";
 ////////////////
 
 // Get Api =>

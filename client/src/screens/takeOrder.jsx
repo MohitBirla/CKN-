@@ -16,6 +16,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useSwipeable } from "react-swipeable";
 import ShowTotal from "./showTotal";
 import TextField from '@mui/material/TextField';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function TakeOrder() {
   const history = useNavigate();
@@ -44,12 +46,16 @@ export default function TakeOrder() {
   const [coffee, setCoffee] = useState(false);
   const [coffeeAmount, setCoffeeAmount] = useState(0);
   const [coffeeQuantity, setCoffeeQuantity] = useState(0);
-  const [cigarette, setcigarette] = useState(false);
+  const [cigarette, setCigarette] = useState(false);
   const [cigaretteAmount, setCigaretteAmount] = useState(0);
   const [cigaretteQuantity, setCigaretteQuantity] = useState(0);
+  const [bottle, setBottle] = useState(false);
+  const [bottleAmount, setBottleAmount] = useState(0);
+  const [bottleQuantity, setBottleQuantity] = useState(0);
   const [dropDown, setDropDown] = useState(false);
   const [dateTotal, setDateTotal] = useState();
   const [totalRevenue, setTotalRevenue] = useState([]);
+  const [showChaiBtn, setShowChaiBtn] = useState(false);
 
   const chaiItem = [10, 12, 15];
   const coffeeItem = [20, 25, 60];
@@ -57,13 +63,16 @@ export default function TakeOrder() {
   const clearData = () => {
     setCigaretteQuantity(0);
     setCigaretteAmount(0);
-    setcigarette(false);
+    setCigarette(false);
     setCoffeeQuantity(0);
     setCoffeeAmount(0);
     setCoffee(false);
     setChaiQuantity(0);
     setChaiAmount(0);
     setChai(false);
+    setBottleQuantity(0);
+    setBottleAmount(0);
+    setBottle(false);
     setTotalAmount(0);
   };
 
@@ -108,25 +117,41 @@ export default function TakeOrder() {
         setCigaretteAmount(cigarette);
       }
     }
+    else if (name === "bottleAmount") {
+      if (bottle === true) {
+        const bottle = parseInt(bottleAmount) - parseInt(value);
+        setBottleQuantity(parseInt(bottleQuantity) - 1);
+        setBottleAmount(bottle);
+
+      }
+      else {
+        const bottle = parseInt(bottleAmount) + parseInt(value);
+        setBottleQuantity(parseInt(bottleQuantity) + 1);
+        setBottleAmount(bottle);
+      }
+    }
   };
   useEffect(() => {
     let total =
-      parseInt(chaiAmount) + parseInt(coffeeAmount) + parseInt(cigaretteAmount);
+      parseInt(chaiAmount) + parseInt(coffeeAmount) + parseInt(cigaretteAmount) + parseInt(bottleAmount);
     setTotalAmount(total);
-  }, [chaiAmount, coffeeAmount, cigaretteAmount]);
+  }, [chaiAmount, coffeeAmount, cigaretteAmount , bottleAmount]);
 
   useEffect(() => {
     if (editItem.length > 0) {
       setOrderNo(editItem[0].orderNo);
       setCigaretteQuantity(editItem[0].cigaretteQuantity);
       setCigaretteAmount(editItem[0].cigarette);
-      setcigarette(false);
+      setCigarette(false);
       setCoffeeQuantity(editItem[0].coffeeQuantity);
       setCoffeeAmount(editItem[0].coffee);
       setCoffee(false);
       setChaiQuantity(editItem[0].chaiQuantity);
       setChaiAmount(editItem[0].chai);
       setChai(false);
+      setBottleQuantity(editItem[0].bottleQuantity);
+      setBottleAmount(editItem[0].bottle);
+      setBottle(false);
       // setTotalAmount(editItem[0].orderTotal);
     }
   }, [editItem]);
@@ -140,13 +165,15 @@ export default function TakeOrder() {
       coffeeQuantity: coffeeQuantity,
       cigarette: cigaretteAmount,
       cigaretteQuantity: cigaretteQuantity,
+      bottle: bottleAmount,
+      bottleQuantity: bottleQuantity,
       date: newDate,
       time: new Date().toLocaleTimeString(),
       orderStatus: "PENDING",
       paymentMode: paymentMode === true ? "Online" : "Offline",
       orderTotal: totalAmount,
     };
-    if (totalAmount > 0 && coffeeAmount >= 0 && chaiAmount >= 0 && cigaretteAmount >= 0) {
+    if (totalAmount > 0 && coffeeAmount >= 0 && chaiAmount >= 0 && cigaretteAmount >= 0 && bottleAmount >=0) {
       await axios.post(`${URL}/setCknItems`, data,
         {
           headers: {
@@ -182,6 +209,10 @@ export default function TakeOrder() {
         setCigaretteAmount(0);
         setCigaretteQuantity(0);
       }
+      if (bottleAmount <= 0) {
+        setBottleAmount(0);
+        setBottleQuantity(0);
+      }
       alert("please add something");
     }
   };
@@ -194,6 +225,8 @@ export default function TakeOrder() {
       coffeeQuantity: coffeeQuantity,
       cigarette: cigaretteAmount,
       cigaretteQuantity: cigaretteQuantity,
+      bottle: bottleAmount,
+      bottleQuantity: bottleQuantity,
       date: newDate,
       time: new Date().toLocaleTimeString(),
       orderStatus: "success",
@@ -213,6 +246,11 @@ export default function TakeOrder() {
             setPendingOrder(!pendingOrder);
             setSuccessOrder(!successOrder);
             setGetOrder(!getOrder);
+            // toast("Loggin Successfully ✔");
+            toast.success("Payment Successfully ✔", {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 2000,
+            });
           }
         },
         (err) => {
@@ -237,6 +275,8 @@ export default function TakeOrder() {
       coffeeQuantity: coffeeQuantity,
       cigarette: cigaretteAmount,
       cigaretteQuantity: cigaretteQuantity,
+      bottle: bottleAmount,
+      bottleQuantity: bottleQuantity,
       date: newDate,
       time: editItem[0].time,
       orderStatus: "PENDING",
@@ -279,6 +319,8 @@ export default function TakeOrder() {
       coffeeQuantity: coffeeQuantity,
       cigarette: cigaretteAmount,
       cigaretteQuantity: cigaretteQuantity,
+      bottle: bottleAmount,
+      bottleQuantity: bottleQuantity,
       date: newDate,
       time: editItem[0].time,
       orderStatus: "success",
@@ -325,9 +367,14 @@ export default function TakeOrder() {
     if (cigaretteAmount <= 0 || cigaretteQuantity <= 0) {
       setCigaretteAmount(0);
       setCigaretteQuantity(0);
-      setcigarette(false);
+      setCigarette(false);
     }
-  }, [chaiAmount, coffeeAmount, cigaretteAmount]);
+    if (bottleAmount <= 0 || bottleQuantity <= 0) {
+      setBottleAmount(0);
+      setBottleQuantity(0);
+      setBottle(false);
+    }
+  }, [chaiAmount, coffeeAmount, cigaretteAmount , bottleAmount]);
   const logout = () => {
     localStorage.removeItem("tokens");
     localStorage.removeItem("time");
@@ -364,14 +411,29 @@ export default function TakeOrder() {
       console.log(err)
     });
   }
+  const [hide,setHide]=useState([
+    { Chai:false},
+    { coffee:false},
+    { cigarette:false},
+    { bottle:false},
+  ])
+  const hideItems = (s,i)=>{
+    // console.log(s)
+var dt = hide;
+  dt[i] = {[s]:!dt[i][s]}
+    setHide(dt)
+}
   return (
-    <div className="mt-5 ps-2" style={{ height: "100vh" }}>
-      <div className="row" style={{ height: "100vh" }}>
-        <div className="col-sm-7 col-md-7 col-lg-12 col-xl-12" style={{ height: "100vh" }}>
+    <>
+    <ToastContainer />
+    <div className="mt-5" style={{ height: "" }}>
+      <div className="row" style={{ height: "" }}>
+        <div className="" style={{ height: "" }}>
           <div className="row">
-            <div className="col-lg-3 tea col-xl-3">
-              <div className={`btn-g btn-blob glow-image-hover ${chai === true ? "imggg" : ""}`} onClick={(e) => setChai(!chai)}><img className="img-fluid d-flex align-item-center" src="/images/chai.png"></img></div>
-              <div className="buttonHolder">
+          
+            <div className="col-lg-4 tea col-xl-4 col-md-4 mt-5">
+              <div className={`btn-g btn-blob glow-image-hover ${chai === true ? "imggg" : ""}`} onClick={(e) => {setChai(!chai);hideItems('chai',0)}}><img className="img-fluid d-flex align-item-center" src="/images/chai.png"></img></div>;
+             { hide[0].chai == true? <div className="buttonHolder">
                 {[
                   { className: "button heart", value: "10" },
                   { className: "button cross", value: "12" },
@@ -390,15 +452,13 @@ export default function TakeOrder() {
                     {c.value}
                   </button>
                 ))}
-              </div>
+              </div>:''}
             </div>
-            <div className="col-lg-1">
-              <div className="divider"></div>
-            </div>
-            <div className="col-lg-3 tea col-xl-3">
-              <div onClick={(e) => setCoffee(!coffee)} className={`btn-g btn-blob glow-image-hover ${coffee === true ? "imggg" : ""}`}><img className="img-fluid d-flex align-item-center" src="/images/coffee.png"></img></div>
+            
+            <div className="col-lg-4 tea col-xl-4 col-md-4 mt-5">
+              <div onClick={(e) => {setCoffee(!coffee);hideItems('coffee',1)}} className={`btn-g btn-blob glow-image-hover ${coffee === true ? "imggg" : ""}`}><img className="img-fluid d-flex align-item-center" src="/images/coffee.png"></img></div>
 
-              <div className="buttonHolder">
+              {hide[1].coffee==true?<div className="buttonHolder">
                 {[
                   { className: "button heart", value: "20" },
                   { className: "button cross", value: "22" },
@@ -421,24 +481,140 @@ export default function TakeOrder() {
                     {c.value}
                   </button>
                 ))}
-              </div>
+              </div>:''}
 
 
 
 
             </div>
-            <div className="col-lg-1">
-              <div className="divider"></div>
-            </div>
-            <div className="col-lg-3 tea col-xl-3">
-              <div onClick={(e) => setcigarette(!cigarette)} className={`btn-g btn-blob glow-image-hover ${cigarette === true ? "imggg" : ""}`}><img className="img-fluid d-flex align-item-center" src="/images/cigrate.png"></img></div>
+          
+            <div className="col-lg-4 tea col-xl-4 col-md-4"  {...handlers} >
+                  <section
+                    style={{ maxHeight: "44rem", marginTop: "-1rem" }}
+                  >
+                    <div className="card col-lg-12 col-xl-12" style={{ borderBottom: "dashed" }}>
+                      <div className="text-center fs-6 ">
+                        <div className="d-flex justify-content-between">
+                          <button className="btn" onClick={(e) => clearData(e)}>
+                            <DeleteIcon className="text-danger fs-1" />
+                          </button>
+                          <div> Order No.{editItem.length > 0 ? orderNo : orderNumber} </div>
 
-              <div className="buttonHolder justify-content-center">
+                          {editItem.length > 0 ? <button
+                            className="btn text-success"
+                            onClick={(e) => editDataSuccess(e)}
+                          >
+                            <CheckCircleIcon className="fs-1" />
+                          </button> : <button
+                            className="btn text-success"
+                            onClick={(e) => addSuccessData(e)}
+                          >
+                            <CheckCircleIcon className="fs-1" />
+                          </button>}
+                        </div>
+                      </div>
+
+                      <div style={{ borderBottom: "dashed" }}></div>
+                      {chaiAmount > 0 ? (
+                        <div className="row d-flex justify-content-around mt-1">
+                          <span
+                            className="text-start col-8"
+                            style={{ paddingLeft: "11%" }}
+                          >
+                            {`${chaiQuantity} x Chai`}
+                          </span>
+                          <span className="col-4">{chaiAmount} &#8377;</span>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                      {coffeeAmount > 0 ? (
+                        <div className="row d-flex justify-content-around mt-1">
+                          <span
+                            className="text-start col-8"
+                            style={{ paddingLeft: "11%" }}
+                          >
+                            {`${coffeeQuantity} x Coffee`}
+                          </span>
+                          <span className="col-4">{coffeeAmount} &#8377;</span>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                      {cigaretteAmount > 0 ? (
+                        <div className="row d-flex justify-content-around mt-1">
+                          <span
+                            className="text-start col-8"
+                            style={{ paddingLeft: "11%" }}
+                          >
+                            {`${cigaretteQuantity} x cigarette`}
+                          </span>
+                          <span className="col-4"> {cigaretteAmount} &#8377;</span>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                      {bottleAmount > 0 ? (
+                        <div className="row d-flex justify-content-around mt-1">
+                          <span
+                            className="text-start col-8"
+                            style={{ paddingLeft: "11%" }}
+                          >
+                            {`${bottleQuantity} x bottle`}
+                          </span>
+                          <span className="col-4"> {bottleAmount} &#8377;</span>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+
+                      <div style={{ borderBottom: "dashed" }} className="my-2"></div>
+
+                      <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
+                        <div className="d-flex mx-3 justify-content-between ">
+                          <span className="">TOTAL AMOUNT</span>
+                          <span>{totalAmount} &#8377;</span>
+                        </div>
+                        <div className="d-flex mx-3 justify-content-between">
+                          <span className="mt-2">PAYMENT MODE</span>
+
+                          <span
+                            style={{ cursor: "pointer" }}
+                            onClick={(e) => setPaymentMode(!paymentMode)}
+                          >
+                            {paymentMode === true ? (
+                              <p className="text-primary fs-4">Online</p>
+                            ) : (
+                              <p className="text-danger fs-4">Offline</p>
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="d-flex justify-content-center">
+                        {editItem.length > 0 ? (
+                          <button className="btn" onClick={(e) => editData(e)}>
+                            <ArrowCircleRightIcon sx={{ fontSize: 40 }} />
+                          </button>
+                        ) : (
+                          <button className="btn" onClick={(e) => addData(e)}>
+                            <ArrowCircleRightIcon sx={{ fontSize: 40 }} />
+                          </button>
+                        )}
+                      </div>
+
+                    </div>
+                  </section>
+          </div>
+
+            <div className="col-lg-4 tea col-xl-4 col-md-4 mt-5">
+              <div onClick={(e) => {setCigarette(!cigarette);hideItems('cigarette',2)}} className={`btn-g btn-blob glow-image-hover ${cigarette === true ? "imggg" : ""}`}><img className="img-fluid d-flex align-item-center" src="/images/cigrate.png"></img></div>
+
+              {hide[2].cigarette == true ?<div className="buttonHolder justify-content-center">
                 {[
                   { className: "button heart", value: "8" },
                   { className: "button heart", value: "12" },
                   { className: "button heart", value: "15" },
-                  { className: "button heart ml-5", value: "20" },
+                  { className: "button heart", value: "20" },
                 ].map((c) => (
 
                   <button
@@ -452,7 +628,29 @@ export default function TakeOrder() {
                     {c.value}
                   </button>
                 ))}
-              </div>
+              </div>:""}
+            </div>
+          
+            <div className="col-lg-4 tea col-xl-4 col-md-4 mt-5 ">
+              <div onClick={(e) => {setBottle(!bottle);hideItems('bottle',3)}} className={`btn-g btn-blob glow-image-hover ${bottle === true ? "imggg" : ""}`}><img className="img-fluid d-flex align-item-center" src="/images/waterBottleImg.png"></img></div>
+
+              {hide[3].bottle==true?<div className="buttonHolder justify-content-center">
+                {[
+                  { className: "button heart", value: "10" },
+                ].map((c) => (
+
+                  <button
+                    onClick={(e) => addAmount(e)}
+                    name="bottleAmount"
+                    type="button"
+                    className={` glow-on-hover text-light text-center fs-3  fw-bold ${c.className} ${bottle === true ? "imggg" : ""}`}
+                    value={c.value}
+                    key={c.value}
+                  >
+                    {c.value}
+                  </button>
+                ))}
+              </div>:""}
             </div>
             <div className="col-lg-12 tea col-xl-12">
               <div className="row">
@@ -572,113 +770,7 @@ export default function TakeOrder() {
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <div className="col-sm-5 col-md-5 col-lg-4 offset-lg-8 col-xl-3 "  {...handlers} >
-                  <section
-                    style={{ overflowY: "auto", maxHeight: "44rem", padding: "1rem", marginTop: "-1rem" }}
-                  >
-                    <div className="card col-lg-12 col-xl-12" style={{ borderBottom: "dashed" }}>
-                      <div className="text-center fs-6 ">
-                        <div className="d-flex justify-content-between">
-                          <button className="btn" onClick={(e) => clearData(e)}>
-                            <DeleteIcon className="text-danger fs-1" />
-                          </button>
-                          <div> Order No.{editItem.length > 0 ? orderNo : orderNumber} </div>
-
-                          {editItem.length > 0 ? <button
-                            className="btn text-success"
-                            onClick={(e) => editDataSuccess(e)}
-                          >
-                            <CheckCircleIcon className="fs-1" />
-                          </button> : <button
-                            className="btn text-success"
-                            onClick={(e) => addSuccessData(e)}
-                          >
-                            <CheckCircleIcon className="fs-1" />
-                          </button>}
-                        </div>
-                      </div>
-
-                      <div style={{ borderBottom: "dashed" }}></div>
-                      {chaiAmount > 0 ? (
-                        <div className="row d-flex justify-content-around mt-1">
-                          <span
-                            className="text-start col-8"
-                            style={{ paddingLeft: "11%" }}
-                          >
-                            {`${chaiQuantity} x Chai`}
-                          </span>
-                          <span className="col-4">{chaiAmount} &#8377;</span>
-                        </div>
-                      ) : (
-                        ""
-                      )}
-                      {coffeeAmount > 0 ? (
-                        <div className="row d-flex justify-content-around mt-1">
-                          <span
-                            className="text-start col-8"
-                            style={{ paddingLeft: "11%" }}
-                          >
-                            {`${coffeeQuantity} x Coffee`}
-                          </span>
-                          <span className="col-4">{coffeeAmount} &#8377;</span>
-                        </div>
-                      ) : (
-                        ""
-                      )}
-                      {cigaretteAmount > 0 ? (
-                        <div className="row d-flex justify-content-around mt-1">
-                          <span
-                            className="text-start col-8"
-                            style={{ paddingLeft: "11%" }}
-                          >
-                            {`${cigaretteQuantity} x cigarette`}
-                          </span>
-                          <span className="col-4"> {cigaretteAmount} &#8377;</span>
-                        </div>
-                      ) : (
-                        ""
-                      )}
-
-                      <div style={{ borderBottom: "dashed" }} className="my-2"></div>
-
-                      <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
-                        <div className="d-flex mx-3 justify-content-between ">
-                          <span className="">TOTAL AMOUNT</span>
-                          <span>{totalAmount} &#8377;</span>
-                        </div>
-                        <div className="d-flex mx-3 justify-content-between">
-                          <span className="mt-2">PAYMENT MODE</span>
-
-                          <span
-                            style={{ cursor: "pointer" }}
-                            onClick={(e) => setPaymentMode(!paymentMode)}
-                          >
-                            {paymentMode === true ? (
-                              <p className="text-primary fs-4">Online</p>
-                            ) : (
-                              <p className="text-danger fs-4">Offline</p>
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="d-flex justify-content-center">
-                        {editItem.length > 0 ? (
-                          <button className="btn" onClick={(e) => editData(e)}>
-                            <ArrowCircleRightIcon sx={{ fontSize: 40 }} />
-                          </button>
-                        ) : (
-                          <button className="btn" onClick={(e) => addData(e)}>
-                            <ArrowCircleRightIcon sx={{ fontSize: 40 }} />
-                          </button>
-                        )}
-                      </div>
-                      {/* <div className=""><span className="fs-3">*****</span><span>THANK YOU</span><span className="fs-3">*****</span></div>*/}
-                    </div>
-                  </section>
-                </div>
-
+                </div> 
               </div>
             </div>
           </div>
@@ -686,5 +778,6 @@ export default function TakeOrder() {
 
       </div>
     </div>
+    </>
   );
 }

@@ -287,15 +287,15 @@ h2 {
   /* border-radius:100  %; */
 }
 
-.glow-image-hover:active {
+/* .glow-image-hover:active {
   color: #000
-}
+} */
 .imggg:after{
-  background: transparent !important;
-  color: #000 !important;
+  /* background: transparent !important; */
+  /* color: #000 !important; */
   
 }
-
+/* 
 .glow-image-hover:active:after {
   background: transparent;
 }
@@ -327,7 +327,7 @@ h2 {
   left: 0;
   top: 0;
   border-radius:2%;
-}
+} */
 
 @keyframes glowing {
   0% { background-position: 0 0; }

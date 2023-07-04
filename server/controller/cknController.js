@@ -83,6 +83,8 @@ exports.setCknItems = (req, res) => {
                             date: req.body.date,
                             time: req.body.time,
                             chai: req.body.chai,
+                            bottle: req.body.bottle,
+                            bottleQuantity: req.body.bottleQuantity,
                             coffee: req.body.coffee,
                             cigarette: req.body.cigarette,
                             cigaretteQuantity: req.body.cigaretteQuantity,
@@ -270,6 +272,7 @@ exports.getTotalByDate = async (req, res) => {
                 _id: "$date",
                 totalAmount: { $sum: { $add: "$orderTotal" } },
                 chaiAmount: { $sum: { $add: "$chai" } },
+                bottleAmount: { $sum: { $add: "$bottle" } },
                 coffeeAmount: { $sum: { $add: "$coffee" } },
                 cigaretteAmount: { $sum: { $add: "$cigarette" } },
                 count: { $sum: 1 }
@@ -285,6 +288,7 @@ exports.getTotalByDate = async (req, res) => {
                 _id: "null",
                 totalAmount: { $sum: { $add: "$orderTotal" } },
                 chaiAmount: { $sum: { $add: "$chai" } },
+                bottleAmount: { $sum: { $add: "$bottle" } },
                 coffeeAmount: { $sum: { $add: "$coffee" } },
                 cigaretteAmount: { $sum: { $add: "$cigarette" } },
                 count: { $sum: 1 }
@@ -298,6 +302,7 @@ exports.getTotalByDate = async (req, res) => {
                     _id: { week: { $week: "$createdAt" }, dayOfWeek: { $dayOfWeek: "$createdAt" } },
                     totalAmount: { $sum: { $add: "$orderTotal" } },
                     chaiAmount: { $sum: { $add: "$chai" } },
+                    bottleAmount: { $sum: { $add: "$bottle" } },
                     coffeeAmount: { $sum: { $add: "$coffee" } },
                     cigaretteAmount: { $sum: { $add: "$cigarette" } },
                     count: { $sum: 1 }
@@ -317,6 +322,7 @@ exports.getTotalByDate = async (req, res) => {
                     _id: { $week: "$createdAt" },
                     totalAmount: { $sum: { $add: "$orderTotal" } },
                     chaiAmount: { $sum: { $add: "$chai" } },
+                    bottleAmount: { $sum: { $add: "$bottle" } },
                     coffeeAmount: { $sum: { $add: "$coffee" } },
                     cigaretteAmount: { $sum: { $add: "$cigarette" } },
                     count: { $sum: 1 }
@@ -336,6 +342,7 @@ exports.getTotalByDate = async (req, res) => {
                     _id: { dayOfMonth: { $dayOfMonth: "$createdAt" }, month: { $month: "$createdAt" } },
                     totalAmount: { $sum: { $add: "$orderTotal" } },
                     chaiAmount: { $sum: { $add: "$chai" } },
+                    bottleAmount: { $sum: { $add: "$bottle" } },
                     coffeeAmount: { $sum: { $add: "$coffee" } },
                     cigaretteAmount: { $sum: { $add: "$cigarette" } },
                     count: { $sum: 1 }
@@ -349,6 +356,7 @@ exports.getTotalByDate = async (req, res) => {
                     _id: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" } },
                     totalAmount: { $sum: { $add: "$orderTotal" } },
                     chaiAmount: { $sum: { $add: "$chai" } },
+                    bottleAmount: { $sum: { $add: "$bottle" } },
                     coffeeAmount: { $sum: { $add: "$coffee" } },
                     cigaretteAmount: { $sum: { $add: "$cigarette" } },
                     count: { $sum: 1 }

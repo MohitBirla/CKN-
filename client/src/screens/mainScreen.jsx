@@ -59,25 +59,25 @@ export default function MainScreen() {
     <div className='mainScreen_Bg' {...handlers} style={{ overflowY: "hidden", overflowX: "hidden" }}>
       <div className='row '>
 
-        <div className='col-sm-7 col-md-7 col-lg-9 col-xl-8'>
-          <TakeOrder ></TakeOrder>
+        <div className='col-sm-9 col-md-9 col-lg-9 col-xl-9'>
+          <TakeOrder/>
         </div>
-        <div className='col-sm-5 col-md-5 col-lg-3 col-xl-4'>
+         <div className='col-sm-5 col-md-3 col-lg-3 col-xl-3'>
           <div className='row '>
             {showOrder === false ?
-              <div className='col-lg-12 col-md-7 col-sm-6 col-xl-6 '>
+              <div className='col-lg-12 col-md-12 col-sm-12 col-xl-12'>
                 <Pending_Bill />
               </div>
               :
-              <div className='col-lg-12 col-md-7 col-sm-6 col-xl-6 '>
+              <div className='col-lg-12 col-md-12 col-sm-12 col-xl-12 '>
                 <Success_Order />
               </div>
             }
-            <div className='col-lg-12 col-md-7 col-sm-6 col-xl-6 mobileHide'>
+            {/* <div className='col-lg-12 col-md-6 col-sm-6 col-xl-6 mobileHide'>
               <Success_Order />
-            </div>
+            </div> */}
           </div>
-        </div>
+        </div> 
 
       </div>
     </div>
