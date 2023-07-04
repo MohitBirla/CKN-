@@ -19,7 +19,7 @@ const categoryRouter = require("./routes/expenseRoutes");
 const jwt = require("jsonwebtoken");
 const iplocation = require('iplocation').default;
 app.use(express.json());
-app.use(cors({ origin: "*", credentials: true }));
+app.use(cors());
 
 app.use(requestIp.mw());
 
